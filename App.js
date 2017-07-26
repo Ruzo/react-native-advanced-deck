@@ -4,18 +4,33 @@ import { Card, Button } from 'react-native-elements';
 
 import Deck from './src/Deck';
 
-const DATA = [
-  { id: 1, text: 'Card #1', uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-04.jpg' },
-  { id: 2, text: 'Card #2', uri: 'http://www.fluxdigital.co/wp-content/uploads/2015/04/Unsplash.jpg' },
-  { id: 3, text: 'Card #3', uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-09.jpg' },
-  { id: 4, text: 'Card #4', uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-01.jpg' },
-  { id: 5, text: 'Card #5', uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-04.jpg' },
-  { id: 6, text: 'Card #6', uri: 'http://www.fluxdigital.co/wp-content/uploads/2015/04/Unsplash.jpg' },
-  { id: 7, text: 'Card #7', uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-09.jpg' },
-  { id: 8, text: 'Card #8', uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-01.jpg' },
-];
-
 export default class App extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      data: []
+    };
+
+    this.loadCardsData = this.loadCardsData.bind(this);
+  }
+  componentWillMount(){
+    this.loadCardsData();
+  }
+
+  loadCardsData(){
+    console.log("Loading cards' data...");
+    let DATA = []
+    for(i = 0; i < 8; i++){
+      DATA[i] = {
+        id: i + 1,
+        text: `Card #${i + 1}`,
+        uri: 'http://loremflickr.com/441/215/brazil?random='+(i+1)
+      };
+    }
+    this.setState({ data: DATA });
+  }
+
   renderCard(card){
     return (
         <Card
@@ -33,12 +48,31 @@ export default class App extends React.Component {
     )
   }
 
+  renderNoMoreCards(loadCardsFunc){
+    return (
+        <Card
+          title = "All Done!"
+          image = {{ uri: "https://unsplash.it/g/800/390/?blur" }}
+        >
+          <Text style={{ marginBottom: 10 }}>There are no cards left.</Text>
+          <Button
+            icon = {{ name: 'code' }}
+            backgroundColor = "#ccc"
+            title="More cards!"
+            onPress={() => loadCardsFunc()}
+          />
+        </Card>
+    )
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Deck
           renderCard={this.renderCard}
-          data = {DATA}
+          renderNoMoreCards = {this.renderNoMoreCards}
+          loadCardsData = { this.loadCardsData }
+          data = {this.state.data}
         />
       </View>
     );
@@ -49,6 +83,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'red',
-    marginTop: 20
+    paddingTop: '25%'
   },
 });
